@@ -1,5 +1,8 @@
 import pandas as pd
 
 df = pd.read_parquet('house-price.parquet')
-# print(df.head())
+df.head()
+df.info()
+df.describe()
+
 print(df.columns)
