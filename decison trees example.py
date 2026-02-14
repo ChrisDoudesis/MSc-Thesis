@@ -11,8 +11,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 
 # Figures inline and set visualization style
-%matplotlib inline
-sns.set()
+# %matplotlib inline
+# sns.set()
 
 # Import data
 df_train = pd.read_csv('data/train.csv')
