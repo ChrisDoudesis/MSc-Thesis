@@ -70,9 +70,9 @@ def main():
 
     ax1.text(-5.8, 0.53, "decision threshold $0.5$",
              color=LR_GUIDE, fontsize=8, ha="left", va="bottom")
-    ax1.text(2, 0.88, "predict EV",
+    ax1.text(10, 0.88, "predict EV",
              color=LR_MAIN, fontsize=8, ha="left", va="center")
-    ax1.text(-2, 0.12, "predict no EV",
+    ax1.text(-10, 0.12, "predict no EV",
              color=LR_NEG, fontsize=8, ha="right", va="center")
 
     ax1.set_xlim(-6, 6)
