@@ -6,14 +6,22 @@
 #   python plot_type_distributions.py                 # tau = 0.90
 #   python plot_type_distributions.py --threshold 70
 #
-# Expects in the working directory:
+# Expects in MSc-Thesis/data (found relative to this file, so the script can
+# be run from any working directory):
 #   rf_EV_hus_type.csv,  xgb_EV_hus_type.csv   (DEF_KODE files)
 #   rf_EV_varme_type.csv, xgb_EV_varme_type.csv (VARME files)
 
 import argparse
+from pathlib import Path
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+
+# anchor paths to this file so the script works from any working directory
+ROOT = Path(__file__).resolve().parent.parent   # MSc-Thesis/
+DATA_DIR = ROOT / "data"
+RESULTS_DIR = ROOT / "results"
 
 DEF_LABELS = {
     100: "Dwellings (unspecified)",
@@ -44,7 +52,7 @@ def load(prefix, code_col, labels, threshold):
     col = f"n_evs_p{threshold}"
     out = {}
     for m in ("rf", "xgb"):
-        df = pd.read_csv(f"../data/{m}_EV_{prefix}.csv")
+        df = pd.read_csv(DATA_DIR / f"{m}_EV_{prefix}.csv")
         df["label"] = df[code_col].map(labels)
         df["pen"] = df[col] / df["n_meters"] * 100
         out[m] = df.set_index("label")[["pen", "n_meters"]]
@@ -57,10 +65,13 @@ def main(threshold):
     hus = load("hus_type", "DEF_KODE", DEF_LABELS, threshold)
     varme = load("varme_type", "VARME", VARME_LABELS, threshold)
 
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-    for ax, data, title in zip(axes, [hus, varme],
-                               ["Dwelling / consumption type (DEF\\_KODE)",
-                                "Heating type (VARME)"]):
+    # one figure per category type, saved separately
+    panels = [
+        (hus, "Dwelling / consumption type (DEF_KODE)", "dwelling"),
+        (varme, "Heating type (VARME)", "heating"),
+    ]
+    for data, title, suffix in panels:
+        fig, ax = plt.subplots(figsize=(8, 6))
         y = np.arange(len(data))
         ax.barh(y + 0.2, data["pen_rf"], height=0.4, label="Random Forest")
         ax.barh(y - 0.2, data["pen_xgb"], height=0.4, label="XGBoost")
@@ -74,16 +85,17 @@ def main(threshold):
                         xy=(max(row['pen_rf'], row['pen_xgb']), yi),
                         xytext=(4, 0), textcoords="offset points",
                         va="center", fontsize=7, color="grey")
-    axes[0].legend(loc="lower right")
-    plt.tight_layout()
-    out = f"../results/type_distributions_p{threshold}.pdf"
-    plt.savefig(out, bbox_inches="tight", dpi=300)
-    print(f"saved {out}")
+        ax.legend(loc="lower right")
+        plt.tight_layout()
+        out = RESULTS_DIR / f"type_distributions_{suffix}_p{threshold}.pdf"
+        plt.savefig(out, bbox_inches="tight", dpi=300)
+        plt.close(fig)
+        print(f"saved {out}")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--threshold", type=int, default=90,
-                    choices=[50, 70, 80, 90, 95])
+                    choices=[50, 70, 80, 90])
     args = ap.parse_args()
     main(args.threshold)
