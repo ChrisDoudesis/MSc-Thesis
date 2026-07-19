@@ -40,7 +40,7 @@ def load_boundaries() -> gpd.GeoDataFrame:
     return gdf
 
 
-def plot(models, threshold, cmap="viridis"):
+def plot(models, threshold, cmap="PuBuGn"):
     gdf = load_boundaries()
 
     # shared colour scale across models so the separate maps stay comparable
@@ -64,7 +64,8 @@ def plot(models, threshold, cmap="viridis"):
                         xy=(c.x, c.y), ha="center", fontsize=9,
                         color="white", fontweight="bold",
                         path_effects=[pe.withStroke(linewidth=1.5, foreground="black")])
-        ax.set_title({"rf": "Random Forest", "xgb": "XGBoost"}[m])
+        ax.set_title({"rf": "EV Chargers Distribution per Region - Random Forest",
+                      "xgb": "EV Chargers Distribution per Region - XGBoost"}[m])
         ax.set_axis_off()
 
         plt.tight_layout()
@@ -78,7 +79,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", choices=["rf", "xgb", "both"], default="both")
     ap.add_argument("--threshold", type=int, default=90, choices=VALID_THRESHOLDS)
-    ap.add_argument("--cmap", default="viridis")
+    ap.add_argument("--cmap", default="PuBuGn")
     args = ap.parse_args()
     models = ["rf", "xgb"] if args.model == "both" else [args.model]
     plot(models, args.threshold, cmap=args.cmap)
