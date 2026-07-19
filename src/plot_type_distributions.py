@@ -44,7 +44,7 @@ def load(prefix, code_col, labels, threshold):
     col = f"n_evs_p{threshold}"
     out = {}
     for m in ("rf", "xgb"):
-        df = pd.read_csv(f"{m}_EV_{prefix}.csv")
+        df = pd.read_csv(f"../data/{m}_EV_{prefix}.csv")
         df["label"] = df[code_col].map(labels)
         df["pen"] = df[col] / df["n_meters"] * 100
         out[m] = df.set_index("label")[["pen", "n_meters"]]
@@ -76,7 +76,7 @@ def main(threshold):
                         va="center", fontsize=7, color="grey")
     axes[0].legend(loc="lower right")
     plt.tight_layout()
-    out = f"type_distributions_p{threshold}.pdf"
+    out = f"../results/type_distributions_p{threshold}.pdf"
     plt.savefig(out, bbox_inches="tight", dpi=300)
     print(f"saved {out}")
 
