@@ -23,6 +23,16 @@ ROOT = Path(__file__).resolve().parent.parent   # MSc-Thesis/
 DATA_DIR = ROOT / "data"
 RESULTS_DIR = ROOT / "results"
 
+# thesis-readable font sizes (figures get scaled down when placed in Overleaf)
+plt.rcParams.update({
+    "font.size": 13,          # base size (fallback for anything not set below)
+    "axes.titlesize": 15,     # panel title
+    "axes.labelsize": 13,     # x/y axis labels
+    "xtick.labelsize": 12,    # x tick numbers
+    "ytick.labelsize": 12,    # category names on the y axis
+    "legend.fontsize": 12,
+})
+
 DEF_LABELS = {
     100: "Dwellings (unspecified)",
     111: "Apartment, no electric heating",
@@ -84,9 +94,9 @@ def main(threshold):
             ax.annotate(f"n={int(row['n_meters_rf']):,}",
                         xy=(max(row['pen_rf'], row['pen_xgb']), yi),
                         xytext=(4, 0), textcoords="offset points",
-                        va="center", fontsize=10, color="grey")
+                        va="center", fontsize=12, color="grey")
         # headroom past the longest bar so the n= annotations stay inside the axes
-        ax.set_xlim(0, data[["pen_rf", "pen_xgb"]].max().max())
+        ax.set_xlim(0, data[["pen_rf", "pen_xgb"]].max().max()* 1.1)
         ax.legend(loc="lower right")
         plt.tight_layout()
         out = RESULTS_DIR / f"type_distributions_{suffix}_p{threshold}.pdf"
