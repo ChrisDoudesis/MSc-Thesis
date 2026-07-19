@@ -84,7 +84,9 @@ def main(threshold):
             ax.annotate(f"n={int(row['n_meters_rf']):,}",
                         xy=(max(row['pen_rf'], row['pen_xgb']), yi),
                         xytext=(4, 0), textcoords="offset points",
-                        va="center", fontsize=7, color="grey")
+                        va="center", fontsize=10, color="grey")
+        # headroom past the longest bar so the n= annotations stay inside the axes
+        ax.set_xlim(0, data[["pen_rf", "pen_xgb"]].max().max())
         ax.legend(loc="lower right")
         plt.tight_layout()
         out = RESULTS_DIR / f"type_distributions_{suffix}_p{threshold}.pdf"
