@@ -68,6 +68,15 @@ def regional_summary(csv_path: str, threshold: int = 90) -> pd.DataFrame:
     out["weighted_mean_prob"] = (
         w.groupby(df["region"]).sum() / df.groupby("region")["n_meters"].sum()
     ).reindex(REGIONS.keys()).round(4)
+    # country-level total: meter-weighted national penetration, for reference
+    out.loc["Denmark"] = [
+        out["n_municipalities"].sum(), out["n_meters"].sum(), out["n_evs"].sum(),
+        round(out["n_evs"].sum() / out["n_meters"].sum() * 100, 2),
+        round(w.sum() / df["n_meters"].sum(), 4),
+    ]
+    out[["n_municipalities", "n_meters", "n_evs"]] = (
+        out[["n_municipalities", "n_meters", "n_evs"]].astype(int)
+    )
     return out
 
 
